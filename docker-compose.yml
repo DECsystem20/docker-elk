@@ -7,12 +7,11 @@ services:
       context: elasticsearch/
       args:
         ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-    ports:
-      - "9200:9200"
-      - "9300:9300"
     environment:
+      LOGSPOUT: ignore
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
       - elk
@@ -22,14 +21,13 @@ services:
       context: logstash/
       args:
         ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-    ports:
-      - "5000:5000"
-      - "9600:9600"
     environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      LOGSPOUT: ignore
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
       - elk
     depends_on:
@@ -40,15 +38,30 @@ services:
       context: kibana/
       args:
         ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
     ports:
-      - "5601:5601"
+      - "127.0.0.1:30000:5601"
+    environment:
+      LOGSPOUT: ignore
     networks:
       - elk
     depends_on:
       - elasticsearch
 
+  logspout:  
+    image: gliderlabs/logspout:latest
+    command: 'syslog://logstash:5001'
+    volumes:
+      - '/var/run/docker.sock:/tmp/docker.sock'
+    environment:
+      LOGSPOUT: ignore
+    networks:
+      - elk
+    depends_on:
+      - logstash  
+      
 networks:
 
   elk:
