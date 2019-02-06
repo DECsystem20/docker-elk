@@ -53,6 +53,7 @@ services:
   logspout:  
     image: gliderlabs/logspout:latest
     command: 'syslog://logstash:5001'
+    restart: unless-stopped
     volumes:
       - '/var/run/docker.sock:/tmp/docker.sock'
     environment:
