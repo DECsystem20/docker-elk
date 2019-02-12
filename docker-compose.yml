@@ -17,9 +17,9 @@ services:
       - elk
     logging:
       driver: "json-file"
-        options:
-          max-size: "200k"
-          max-file: "10"
+      options:
+        max-size: "200k"
+        max-file: "10"
 
   logstash:
     build:
@@ -39,9 +39,9 @@ services:
       - elasticsearch
     logging:
       driver: "json-file"
-        options:
-          max-size: "200k"
-          max-file: "10"
+      options:
+        max-size: "200k"
+        max-file: "10"
 
   kibana:
     build:
@@ -61,9 +61,9 @@ services:
       - elasticsearch
     logging:
       driver: "json-file"
-        options:
-          max-size: "200k"
-          max-file: "10"
+      options:
+        max-size: "200k"
+        max-file: "10"
 
   logspout:  
     image: gliderlabs/logspout:latest
@@ -79,9 +79,9 @@ services:
       - logstash  
     logging:
       driver: "json-file"
-        options:
-          max-size: "200k"
-          max-file: "10"
+      options:
+        max-size: "200k"
+        max-file: "10"
       
 networks:
 
